@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tree of Life — VRChat Dance Club</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    :root {
+      --deep-violet: #0d0a1f;
+      --mid-purple: #2a1650;
+      --lavender: #c5a0f0;
+      --soft-purple: #9b6fd4;
+      --crystal-mint: #7eedc6;
+      --crystal-green: #5ae8a8;
+      --crystal-pink: #e8a0d4;
+      --glow-green: #b4ff9a;
+      --warm-lantern: #f5e8a0;
+      --card-bg: rgba(26, 16, 61, 0.6);
+      --card-border: rgba(197, 160, 240, 0.2);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: var(--deep-violet);
+      color: #ede6f7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ——— Sunset horizon background ——— */
+    .bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: linear-gradient(
+        180deg,
+        #0b0824 0%,
+        #1a103d 15%,
+        #2d1560 28%,
+        #5c2d8e 40%,
+        #8e3a8a 50%,
+        #c74e6e 58%,
+        #d4684f 65%,
+        #b8753e 72%,
+        #8a6435 82%,
+        #5a4028 92%,
+        #3a2818 100%
+      );
+      animation: sunsetShift 20s ease-in-out infinite alternate;
+    }
+    @keyframes sunsetShift {
+      0%   { filter: brightness(1) saturate(1); }
+      50%  { filter: brightness(1.05) saturate(1.1); }
+      100% { filter: brightness(0.92) saturate(0.95) hue-rotate(-5deg); }
+    }
+
+    /* Horizon glow accent */
+    .bg-canvas::after {
+      content: '';
+      position: absolute;
+      bottom: 15%;
+      left: 0;
+      right: 0;
+      height: 30%;
+      background: radial-gradient(ellipse 120% 80% at 50% 100%, rgba(212,104,79,0.15), transparent);
+      pointer-events: none;
+    }
+
+    /* ——— Sparkle particles ——— */
+    .sparkles {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .sparkle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+      animation: twinkle ease-in-out infinite;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; transform: scale(0.5); }
+      50%      { opacity: 1; transform: scale(1); }
+    }
+
+    /* ——— Main container ——— */
+    .hub {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 50px 24px 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 36px;
+    }
+
+    /* ——— Header ——— */
+    .header {
+      text-align: center;
+      animation: fadeDown 1s ease-out both;
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-25px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo-wrap {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 8px;
+      position: relative;
+    }
+    .logo-wrap img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow:
+        0 0 30px rgba(155,111,212,0.4),
+        0 0 60px rgba(126,237,198,0.15);
+      animation: logoGlow 4s ease-in-out infinite alternate;
+    }
+    @keyframes logoGlow {
+      from { box-shadow: 0 0 30px rgba(155,111,212,0.4), 0 0 60px rgba(126,237,198,0.15); }
+      to   { box-shadow: 0 0 40px rgba(155,111,212,0.55), 0 0 80px rgba(126,237,198,0.25); }
+    }
+
+    .banner-wrap {
+      max-width: 480px;
+      margin: 0 auto;
+      animation: fadeDown 1s ease-out 0.2s both;
+    }
+    .banner-wrap img {
+      width: 100%;
+      height: auto;
+      filter: drop-shadow(0 4px 20px rgba(155,111,212,0.3));
+    }
+
+    .tagline {
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 400;
+      font-size: 0.95rem;
+      color: var(--lavender);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-top: 6px;
+      opacity: 0.7;
+      animation: fadeDown 1s ease-out 0.4s both;
+    }
+
+    /* ——— Divider ——— */
+    .divider {
+      width: 120px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--crystal-mint), var(--warm-lantern), var(--crystal-pink), transparent);
+      border-radius: 1px;
+      opacity: 0.5;
+      animation: fadeUp 0.8s ease-out 0.5s both;
+    }
+
+    /* ——— Link cards ——— */
+    .links {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .link-card {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 20px 24px;
+      border-radius: 18px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      text-decoration: none;
+      color: #ede6f7;
+      transition: transform 0.3s cubic-bezier(.22,.68,0,1.2), box-shadow 0.4s, border-color 0.4s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.7s ease-out both;
+    }
+    .link-card:nth-child(1) { animation-delay: 0.3s; }
+    .link-card:nth-child(2) { animation-delay: 0.42s; }
+    .link-card:nth-child(3) { animation-delay: 0.54s; }
+    .link-card:nth-child(4) { animation-delay: 0.66s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .link-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .link-card[data-color="mint"]::before    { background: linear-gradient(135deg, rgba(126,237,198,0.1), transparent 60%); }
+    .link-card[data-color="lavender"]::before { background: linear-gradient(135deg, rgba(197,160,240,0.1), transparent 60%); }
+    .link-card[data-color="lantern"]::before  { background: linear-gradient(135deg, rgba(245,232,160,0.1), transparent 60%); }
+    .link-card[data-color="discord"]::before  { background: linear-gradient(135deg, rgba(88,101,242,0.12), transparent 60%); }
+
+    .link-card:hover::before { opacity: 1; }
+    .link-card:hover {
+      transform: translateY(-3px) scale(1.01);
+      border-color: rgba(197,160,240,0.3);
+    }
+    .link-card[data-color="mint"]:hover    { box-shadow: 0 6px 30px rgba(126,237,198,0.18); }
+    .link-card[data-color="lavender"]:hover { box-shadow: 0 6px 30px rgba(197,160,240,0.2); }
+    .link-card[data-color="lantern"]:hover  { box-shadow: 0 6px 30px rgba(245,232,160,0.15); }
+    .link-card[data-color="discord"]:hover  { box-shadow: 0 6px 30px rgba(88,101,242,0.22); }
+
+    .link-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .link-card[data-color="mint"] .link-icon    { background: rgba(126,237,198,0.12); color: var(--crystal-mint); }
+    .link-card[data-color="lavender"] .link-icon { background: rgba(197,160,240,0.12); color: var(--lavender); }
+    .link-card[data-color="lantern"] .link-icon  { background: rgba(245,232,160,0.12); color: var(--warm-lantern); }
+    .link-card[data-color="discord"] .link-icon  { background: rgba(88,101,242,0.12); color: #7983f5; }
+
+    .link-icon svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    .link-text {
+      flex: 1;
+      position: relative;
+      z-index: 1;
+    }
+    .link-text h3 {
+      font-family: 'Cinzel Decorative', serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+    }
+    .link-text p {
+      font-size: 0.82rem;
+      color: rgba(237,230,247,0.5);
+      margin-top: 3px;
+      font-weight: 300;
+    }
+
+    .link-arrow {
+      position: relative;
+      z-index: 1;
+      color: rgba(237,230,247,0.2);
+      transition: color 0.3s, transform 0.3s;
+      flex-shrink: 0;
+    }
+    .link-card:hover .link-arrow {
+      color: rgba(237,230,247,0.6);
+      transform: translateX(4px);
+    }
+
+    /* ——— Footer ——— */
+    .footer {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 0.72rem;
+      color: rgba(197,160,240,0.25);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      animation: fadeUp 0.7s ease-out 0.8s both;
+    }
+
+    @media (max-width: 500px) {
+      .hub { padding: 36px 16px 60px; gap: 28px; }
+      .logo-wrap { width: 110px; height: 110px; }
+      .banner-wrap { max-width: 320px; }
+      .link-card { padding: 16px 18px; gap: 14px; }
+      .link-icon { width: 42px; height: 42px; }
+      .link-text h3 { font-size: 0.95rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-canvas"></div>
+  <div class="sparkles" id="sparkles"></div>
+
+  <div class="hub">
+
+    <header class="header">
+      <div class="logo-wrap">
+        <img src="logo.png" alt="Tree of Life Logo" />
+      </div>
+      <div class="banner-wrap">
+        <img src="banner.png" alt="Tree of Life" />
+      </div>
+      <p class="tagline">VRChat Dance Club</p>
+    </header>
+
+    <div class="divider"></div>
+
+    <nav class="links">
+
+      <a href="#gallery" class="link-card" data-color="mint">
+        <div class="link-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H3V5h18v14zM5 15l3.5-4.5L12 15l3.5-4.5L19 15H5z"/></svg>
+        </div>
+        <div class="link-text">
+          <h3>Screenshot Gallery</h3>
+          <p>Stunning captures from our world</p>
+        </div>
+        <div class="link-arrow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </a>
+
+      <a href="#staff" class="link-card" data-color="lavender">
+        <div class="link-icon">
+          <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        </div>
+        <div class="link-text">
+          <h3>Staff Info</h3>
+          <p>Meet the team behind the magic</p>
+        </div>
+        <div class="link-arrow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </a>
+
+      <a href="#calendar" class="link-card" data-color="lantern">
+        <div class="link-icon">
+          <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>
+        </div>
+        <div class="link-text">
+          <h3>Events Calendar</h3>
+          <p>Upcoming sets, themed nights & specials</p>
+        </div>
+        <div class="link-arrow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </a>
+
+      <a href="https://discord.gg/YOUR-INVITE" target="_blank" rel="noopener" class="link-card" data-color="discord">
+        <div class="link-icon">
+          <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+        </div>
+        <div class="link-text">
+          <h3>Join the Discord</h3>
+          <p>Chat, chill & stay in the loop</p>
+        </div>
+        <div class="link-arrow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </a>
+
+    </nav>
+
+    <div class="footer">
+      &copy; 2026 Tree of Life &mdash; See you on the dance floor
+    </div>
+
+  </div>
+
+  <script>
+    const container = document.getElementById('sparkles');
+    const colors = ['#c5a0f0','#7eedc6','#f5a04a','#fcd97e','#e87454','#ffffff'];
+    for (let i = 0; i < 40; i++) {
+      const s = document.createElement('div');
+      s.className = 'sparkle';
+      const size = Math.random() * 3 + 1.5;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      s.style.cssText = `
+        width:${size}px;height:${size}px;
+        background:${color};
+        left:${Math.random()*100}%;
+        top:${Math.random()*100}%;
+        animation-duration:${Math.random()*4+2}s;
+        animation-delay:${Math.random()*6}s;
+        box-shadow: 0 0 ${size*3}px ${color};
+      `;
+      container.appendChild(s);
+    }
+  </script>
+
+</body>
+</html>
