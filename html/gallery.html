@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gallery — Tree of Life</title>
-  <link rel="icon" type="image/png" href="elements/favicon.png">
+  <link rel="icon" type="image/png" href="../elements/favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     /* ═══════════════════════════════════════
@@ -372,12 +372,12 @@
 
     <!-- ════════ HEADER ════════ -->
     <header class="gallery-header">
-      <a href="hub.html" class="back-link">
+      <a href="../hub.html" class="back-link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
         Back to Hub
       </a>
       <br>
-      <img src="elements/logo.png" alt="Tree of Life Logo" class="gallery-logo">
+      <img src="../elements/logo.png" alt="Tree of Life Logo" class="gallery-logo">
       <h1>Screenshot Gallery</h1>
       <p>Moments captured from the dance floor &amp; beyond</p>
     </header>
@@ -394,7 +394,7 @@
          HOW TO ADD IMAGES:
          Copy a <div class="gallery-item"> block and change:
            1. data-category  →  "events", "vibes", or "community"
-           2. src            →  path to your screenshot (e.g. "elements/gallery/my-photo.png")
+           2. src            →  path to your screenshot (e.g. "../elements/gallery/my-photo.png")
            3. alt            →  description of the image
            4. .tag text      →  the category label shown on the card
            5. caption text   →  your caption for the image
@@ -404,7 +404,7 @@
       <!-- ★ EXAMPLE ITEM — duplicate this block for each screenshot ★ -->
       <!--
       <div class="gallery-item" data-category="events">
-        <img src="elements/gallery/screenshot1.png" alt="Description of screenshot">
+        <img src="../elements/gallery/screenshot1.png" alt="Description of screenshot">
         <div class="caption">
           <div class="tag">Events</div>
           Your caption text here
@@ -421,7 +421,7 @@
         <circle cx="8.5" cy="8.5" r="1.5"/>
         <path d="M21 15l-5-5L5 21"/>
       </svg>
-      <p>No screenshots yet! Add your first images to the <code>elements/gallery/</code> folder and uncomment the example items in the HTML.</p>
+      <p>No screenshots yet! Add your first images to the <code>elements/gallery/</code> folder and uncomment the example items in the HTML. (Use <code>../elements/gallery/</code> paths since this page lives in the <code>html/</code> subfolder.)</p>
     </div>
 
     <footer class="gallery-footer">
