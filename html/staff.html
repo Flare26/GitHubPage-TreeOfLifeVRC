@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Staff — Tree of Life</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="/elements/favicon.png">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    :root {
+      --deep-violet: #0d0a1f;
+      --mid-purple: #2a1650;
+      --lavender: #c5a0f0;
+      --soft-purple: #9b6fd4;
+      --crystal-mint: #7eedc6;
+      --crystal-green: #5ae8a8;
+      --crystal-pink: #e8a0d4;
+      --glow-green: #b4ff9a;
+      --warm-lantern: #f5e8a0;
+      --card-bg: rgba(26, 16, 61, 0.6);
+      --card-border: rgba(197, 160, 240, 0.2);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: var(--deep-violet);
+      color: #ede6f7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ——— Sunset horizon background ——— */
+    .bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: linear-gradient(
+        180deg,
+        #0b0824 0%,
+        #1a103d 15%,
+        #2d1560 28%,
+        #5c2d8e 40%,
+        #8e3a8a 50%,
+        #c74e6e 58%,
+        #d4684f 65%,
+        #b8753e 72%,
+        #8a6435 82%,
+        #5a4028 92%,
+        #3a2818 100%
+      );
+      animation: sunsetShift 20s ease-in-out infinite alternate;
+    }
+    @keyframes sunsetShift {
+      0%   { filter: brightness(1) saturate(1); }
+      50%  { filter: brightness(1.05) saturate(1.1); }
+      100% { filter: brightness(0.92) saturate(0.95) hue-rotate(-5deg); }
+    }
+    .bg-canvas::after {
+      content: '';
+      position: absolute;
+      bottom: 15%;
+      left: 0;
+      right: 0;
+      height: 30%;
+      background: radial-gradient(ellipse 120% 80% at 50% 100%, rgba(212,104,79,0.15), transparent);
+      pointer-events: none;
+    }
+
+    /* ——— Sparkle particles ——— */
+    .sparkles {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .sparkle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+      animation: twinkle ease-in-out infinite;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; transform: scale(0.5); }
+      50%      { opacity: 1; transform: scale(1); }
+    }
+
+    /* ——— Main layout ——— */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* ——— Back link ——— */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--lavender);
+      text-decoration: none;
+      opacity: 0.6;
+      transition: opacity 0.3s, transform 0.3s;
+      margin-bottom: 32px;
+      animation: fadeDown 0.6s ease-out both;
+    }
+    .back-link:hover {
+      opacity: 1;
+      transform: translateX(-3px);
+    }
+    .back-link svg {
+      width: 16px;
+      height: 16px;
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-15px); }
+      to   { opacity: 0.6; transform: translateY(0); }
+    }
+
+    /* ——— Page header ——— */
+    .page-header {
+      text-align: center;
+      margin-bottom: 48px;
+      animation: headerIn 0.8s ease-out both;
+    }
+    @keyframes headerIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .page-header h1 {
+      font-family: 'Cinzel Decorative', serif;
+      font-weight: 700;
+      font-size: 2rem;
+      letter-spacing: 0.04em;
+      background: linear-gradient(135deg, var(--lavender), var(--crystal-mint));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .page-header p {
+      font-size: 0.9rem;
+      color: rgba(237,230,247,0.45);
+      margin-top: 8px;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .header-divider {
+      width: 100px;
+      height: 2px;
+      margin: 20px auto 0;
+      background: linear-gradient(90deg, transparent, var(--crystal-pink), var(--warm-lantern), var(--crystal-mint), transparent);
+      border-radius: 1px;
+      opacity: 0.45;
+    }
+
+    /* ——— Role sections ——— */
+    .role-section {
+      margin-bottom: 48px;
+      animation: sectionIn 0.7s ease-out both;
+    }
+    .role-section:nth-child(1) { animation-delay: 0.15s; }
+    .role-section:nth-child(2) { animation-delay: 0.25s; }
+    .role-section:nth-child(3) { animation-delay: 0.35s; }
+    .role-section:nth-child(4) { animation-delay: 0.45s; }
+    .role-section:nth-child(5) { animation-delay: 0.55s; }
+    @keyframes sectionIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .role-label {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .role-label::before,
+    .role-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      opacity: 0.2;
+    }
+    .role-label h2 {
+      font-family: 'Cinzel Decorative', serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Role accent colors */
+    .role-section[data-role="owner"] .role-label h2         { color: var(--warm-lantern); text-shadow: 0 0 20px rgba(245,232,160,0.3); }
+    .role-section[data-role="owner"] .role-label::before,
+    .role-section[data-role="owner"] .role-label::after      { background: linear-gradient(90deg, transparent, rgba(245,232,160,0.4), transparent); }
+
+    .role-section[data-role="co-owner"] .role-label h2       { color: var(--crystal-pink); text-shadow: 0 0 20px rgba(232,160,212,0.3); }
+    .role-section[data-role="co-owner"] .role-label::before,
+    .role-section[data-role="co-owner"] .role-label::after    { background: linear-gradient(90deg, transparent, rgba(232,160,212,0.4), transparent); }
+
+    .role-section[data-role="developer"] .role-label h2      { color: var(--crystal-mint); text-shadow: 0 0 20px rgba(126,237,198,0.3); }
+    .role-section[data-role="developer"] .role-label::before,
+    .role-section[data-role="developer"] .role-label::after   { background: linear-gradient(90deg, transparent, rgba(126,237,198,0.4), transparent); }
+
+    .role-section[data-role="dancer"] .role-label h2         { color: var(--lavender); text-shadow: 0 0 20px rgba(197,160,240,0.3); }
+    .role-section[data-role="dancer"] .role-label::before,
+    .role-section[data-role="dancer"] .role-label::after      { background: linear-gradient(90deg, transparent, rgba(197,160,240,0.4), transparent); }
+
+    .role-section[data-role="club-staff"] .role-label h2     { color: var(--soft-purple); text-shadow: 0 0 20px rgba(155,111,212,0.3); }
+    .role-section[data-role="club-staff"] .role-label::before,
+    .role-section[data-role="club-staff"] .role-label::after  { background: linear-gradient(90deg, transparent, rgba(155,111,212,0.4), transparent); }
+
+    /* ——— Staff grid ——— */
+    .staff-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 18px;
+    }
+
+    /* ——— Staff card ——— */
+    .staff-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 26px 20px 22px;
+      text-align: center;
+      transition: transform 0.35s cubic-bezier(.22,.68,0,1.2), box-shadow 0.4s, border-color 0.4s;
+      position: relative;
+      overflow: hidden;
+    }
+    .staff-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+    }
+    .staff-card:hover::before { opacity: 1; }
+    .staff-card:hover {
+      transform: translateY(-4px) scale(1.015);
+      border-color: rgba(197,160,240,0.3);
+    }
+
+    /* Card hover accents per role */
+    [data-role="owner"] .staff-card::before       { background: linear-gradient(160deg, rgba(245,232,160,0.08), transparent 55%); }
+    [data-role="owner"] .staff-card:hover          { box-shadow: 0 8px 32px rgba(245,232,160,0.12); }
+    [data-role="co-owner"] .staff-card::before     { background: linear-gradient(160deg, rgba(232,160,212,0.08), transparent 55%); }
+    [data-role="co-owner"] .staff-card:hover       { box-shadow: 0 8px 32px rgba(232,160,212,0.12); }
+    [data-role="developer"] .staff-card::before    { background: linear-gradient(160deg, rgba(126,237,198,0.08), transparent 55%); }
+    [data-role="developer"] .staff-card:hover      { box-shadow: 0 8px 32px rgba(126,237,198,0.12); }
+    [data-role="dancer"] .staff-card::before       { background: linear-gradient(160deg, rgba(197,160,240,0.08), transparent 55%); }
+    [data-role="dancer"] .staff-card:hover         { box-shadow: 0 8px 32px rgba(197,160,240,0.12); }
+    [data-role="club-staff"] .staff-card::before   { background: linear-gradient(160deg, rgba(155,111,212,0.08), transparent 55%); }
+    [data-role="club-staff"] .staff-card:hover     { box-shadow: 0 8px 32px rgba(155,111,212,0.12); }
+
+    /* Avatar */
+    .staff-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .staff-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      display: block;
+    }
+
+    /* Ring glow per role */
+    [data-role="owner"] .staff-avatar       { box-shadow: 0 0 0 2px rgba(245,232,160,0.35), 0 0 18px rgba(245,232,160,0.15); }
+    [data-role="co-owner"] .staff-avatar    { box-shadow: 0 0 0 2px rgba(232,160,212,0.35), 0 0 18px rgba(232,160,212,0.15); }
+    [data-role="developer"] .staff-avatar   { box-shadow: 0 0 0 2px rgba(126,237,198,0.35), 0 0 18px rgba(126,237,198,0.15); }
+    [data-role="dancer"] .staff-avatar      { box-shadow: 0 0 0 2px rgba(197,160,240,0.35), 0 0 18px rgba(197,160,240,0.15); }
+    [data-role="club-staff"] .staff-avatar  { box-shadow: 0 0 0 2px rgba(155,111,212,0.35), 0 0 18px rgba(155,111,212,0.15); }
+
+    /* Placeholder for missing photos */
+    .staff-avatar-placeholder {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(42, 22, 80, 0.6);
+    }
+    .staff-avatar-placeholder svg {
+      width: 40px;
+      height: 40px;
+      opacity: 0.3;
+      fill: var(--lavender);
+    }
+
+    /* Text */
+    .staff-username {
+      font-family: 'Cinzel Decorative', serif;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+      margin-bottom: 4px;
+    }
+    .staff-role-tag {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 20px;
+    }
+    [data-role="owner"] .staff-role-tag       { color: var(--warm-lantern); background: rgba(245,232,160,0.1); }
+    [data-role="co-owner"] .staff-role-tag    { color: var(--crystal-pink); background: rgba(232,160,212,0.1); }
+    [data-role="developer"] .staff-role-tag   { color: var(--crystal-mint); background: rgba(126,237,198,0.1); }
+    [data-role="dancer"] .staff-role-tag      { color: var(--lavender); background: rgba(197,160,240,0.1); }
+    [data-role="club-staff"] .staff-role-tag  { color: var(--soft-purple); background: rgba(155,111,212,0.1); }
+
+    .staff-desc {
+      font-size: 0.8rem;
+      font-weight: 300;
+      color: rgba(237,230,247,0.5);
+      line-height: 1.5;
+    }
+
+    /* ——— Footer ——— */
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.72rem;
+      color: rgba(197,160,240,0.25);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    /* ——— Responsive ——— */
+    @media (max-width: 500px) {
+      .page { padding: 28px 16px 60px; }
+      .page-header h1 { font-size: 1.5rem; }
+      .staff-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+      .staff-card { padding: 20px 14px 18px; }
+      .staff-avatar { width: 80px; height: 80px; }
+      .staff-username { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-canvas"></div>
+  <div class="sparkles" id="sparkles"></div>
+
+  <div class="page">
+
+    <a href="../index.html" class="back-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Hub
+    </a>
+
+    <div class="page-header">
+      <h1>Our Staff</h1>
+      <p>The crew that keeps the tree alive</p>
+      <div class="header-divider"></div>
+    </div>
+
+    <div id="staff-sections">
+
+      <!-- ═══════ OWNER ═══════ -->
+      <section class="role-section" data-role="owner">
+        <div class="role-label"><h2>Owner</h2></div>
+        <div class="staff-grid">
+
+          <div class="staff-card">
+            <div class="staff-avatar">
+              <!-- Place avatar at: /elements/staff/username.png -->
+              <img src="../elements/staff/placeholder.png" alt="Username"
+                   onerror="this.parentElement.innerHTML='<div class=\'staff-avatar-placeholder\'><svg viewBox=\'0 0 24 24\'><path d=\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\'/></svg></div>';" />
+            </div>
+            <h3 class="staff-username">Username</h3>
+            <span class="staff-role-tag">Owner</span>
+            <p class="staff-desc">Short description about this person goes here.</p>
+          </div>
+
+          <!-- Copy the card block above for additional Owners -->
+
+        </div>
+      </section>
+
+      <!-- ═══════ CO-OWNER ═══════ -->
+      <section class="role-section" data-role="co-owner">
+        <div class="role-label"><h2>Co-Owner</h2></div>
+        <div class="staff-grid">
+
+          <div class="staff-card">
+            <div class="staff-avatar">
+              <img src="../elements/staff/placeholder.png" alt="Username"
+                   onerror="this.parentElement.innerHTML='<div class=\'staff-avatar-placeholder\'><svg viewBox=\'0 0 24 24\'><path d=\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\'/></svg></div>';" />
+            </div>
+            <h3 class="staff-username">Username</h3>
+            <span class="staff-role-tag">Co-Owner</span>
+            <p class="staff-desc">Short description about this person goes here.</p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ═══════ DEVELOPER ═══════ -->
+      <section class="role-section" data-role="developer">
+        <div class="role-label"><h2>Developer</h2></div>
+        <div class="staff-grid">
+
+          <div class="staff-card">
+            <div class="staff-avatar">
+              <img src="../elements/staff/placeholder.png" alt="Username"
+                   onerror="this.parentElement.innerHTML='<div class=\'staff-avatar-placeholder\'><svg viewBox=\'0 0 24 24\'><path d=\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\'/></svg></div>';" />
+            </div>
+            <h3 class="staff-username">Username</h3>
+            <span class="staff-role-tag">Developer</span>
+            <p class="staff-desc">Short description about this person goes here.</p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ═══════ DANCER ═══════ -->
+      <section class="role-section" data-role="dancer">
+        <div class="role-label"><h2>Dancer</h2></div>
+        <div class="staff-grid">
+
+          <div class="staff-card">
+            <div class="staff-avatar">
+              <img src="../elements/staff/placeholder.png" alt="Username"
+                   onerror="this.parentElement.innerHTML='<div class=\'staff-avatar-placeholder\'><svg viewBox=\'0 0 24 24\'><path d=\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\'/></svg></div>';" />
+            </div>
+            <h3 class="staff-username">Username</h3>
+            <span class="staff-role-tag">Dancer</span>
+            <p class="staff-desc">Short description about this person goes here.</p>
+          </div>
+
+          <div class="staff-card">
+            <div class="staff-avatar">
+              <img src="../elements/staff/placeholder.png" alt="Username"
+                   onerror="this.parentElement.innerHTML='<div class=\'staff-avatar-placeholder\'><svg viewBox=\'0 0 24 24\'><path d=\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\'/></svg></div>';" />
+            </div>
+            <h3 class="staff-username">Username</h3>
+            <span class="staff-role-tag">Dancer</span>
+            <p class="staff-desc">Short description about this person goes here.</p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ═══════ CLUB STAFF ═══════ -->
+      <section class="role-section" data-role="club-staff">
+        <div class="role-label"><h2>Club Staff</h2></div>
+        <div class="staff-grid">
+
+          <div class="staff-card">
+            <div class="staff-avatar">
+              <img src="../elements/staff/placeholder.png" alt="Username"
+                   onerror="this.parentElement.innerHTML='<div class=\'staff-avatar-placeholder\'><svg viewBox=\'0 0 24 24\'><path d=\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\'/></svg></div>';" />
+            </div>
+            <h3 class="staff-username">Username</h3>
+            <span class="staff-role-tag">Club Staff</span>
+            <p class="staff-desc">Short description about this person goes here.</p>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+    <div class="footer">
+      &copy; 2026 Tree of Life &mdash; See you on the dance floor
+    </div>
+
+  </div>
+
+  <script>
+    // Sparkle particles (same as hub)
+    const container = document.getElementById('sparkles');
+    const colors = ['#c5a0f0','#7eedc6','#f5a04a','#fcd97e','#e87454','#ffffff'];
+    for (let i = 0; i < 40; i++) {
+      const s = document.createElement('div');
+      s.className = 'sparkle';
+      const size = Math.random() * 3 + 1.5;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      s.style.cssText = `
+        width:${size}px;height:${size}px;
+        background:${color};
+        left:${Math.random()*100}%;
+        top:${Math.random()*100}%;
+        animation-duration:${Math.random()*4+2}s;
+        animation-delay:${Math.random()*6}s;
+        box-shadow: 0 0 ${size*3}px ${color};
+      `;
+      container.appendChild(s);
+    }
+  </script>
+
+</body>
+</html>
