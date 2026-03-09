@@ -92,6 +92,35 @@
       50%      { opacity: 1; transform: scale(1); }
     }
 
+    /* ——— Falling leaves ——— */
+    .leaves {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .leaf {
+      position: absolute;
+      width: 64px;
+      height: 64px;
+      background-image: url('elements/leaves.png');
+      background-repeat: no-repeat;
+      background-size: 384px 64px;
+      opacity: 0;
+      animation: leafFall linear infinite;
+      will-change: transform, opacity;
+    }
+    @keyframes leafFall {
+      0%   { transform: translateY(-80px) translateX(0) rotate(0deg) scale(var(--leaf-scale)); opacity: 0; }
+      5%   { opacity: var(--leaf-opacity); }
+      25%  { transform: translateY(calc(25vh)) translateX(var(--leaf-sway)) rotate(calc(var(--leaf-spin) * 0.25)) scale(var(--leaf-scale)); }
+      50%  { transform: translateY(calc(50vh)) translateX(calc(var(--leaf-sway) * -0.5)) rotate(calc(var(--leaf-spin) * 0.5)) scale(var(--leaf-scale)); }
+      75%  { transform: translateY(calc(75vh)) translateX(var(--leaf-sway)) rotate(calc(var(--leaf-spin) * 0.75)) scale(var(--leaf-scale)); }
+      90%  { opacity: var(--leaf-opacity); }
+      100% { transform: translateY(calc(100vh + 80px)) translateX(0) rotate(var(--leaf-spin)) scale(var(--leaf-scale)); opacity: 0; }
+    }
+
     /* ——— Main container ——— */
     .hub {
       position: relative;
@@ -305,6 +334,7 @@
 
   <div class="bg-canvas"></div>
   <div class="sparkles" id="sparkles"></div>
+  <div class="leaves" id="leaves"></div>
 
   <div class="hub">
 
@@ -335,7 +365,7 @@
         </div>
       </a>
 
-      <a href="html/staff.html" class="link-card" data-color="lavender">
+      <a href="#staff" class="link-card" data-color="lavender">
         <div class="link-icon">
           <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
         </div>
@@ -348,7 +378,7 @@
         </div>
       </a>
 
-      <a href="html/events.html" class="link-card" data-color="lantern">
+      <a href="#calendar" class="link-card" data-color="lantern">
         <div class="link-icon">
           <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>
         </div>
@@ -400,6 +430,48 @@
         box-shadow: 0 0 ${size*3}px ${color};
       `;
       container.appendChild(s);
+    }
+    // Falling leaves using sprite sheet
+    const leafContainer = document.getElementById('leaves');
+    const LEAF_COLS = 6;
+    const CELL_SIZE = 64;
+
+    function spawnLeaf() {
+      const leaf = document.createElement('div');
+      leaf.className = 'leaf';
+
+      // Pick a random leaf frame from the sprite sheet
+      const frame = Math.floor(Math.random() * LEAF_COLS);
+      leaf.style.backgroundPositionX = `-${frame * CELL_SIZE}px`;
+
+      // Random horizontal position
+      leaf.style.left = `${Math.random() * 100}%`;
+
+      // Random size, speed, opacity, and spin
+      const scale = 0.4 + Math.random() * 0.6;
+      const duration = 8 + Math.random() * 12;
+      const opacity = 0.15 + Math.random() * 0.25;
+      const spin = (Math.random() > 0.5 ? '' : '-') + (180 + Math.random() * 360) + 'deg';
+
+      leaf.style.setProperty('--leaf-scale', scale);
+      leaf.style.setProperty('--leaf-opacity', opacity);
+      leaf.style.setProperty('--leaf-spin', spin);
+      leaf.style.setProperty('--leaf-sway', (15 + Math.random() * 40) * (Math.random() > 0.5 ? 1 : -1) + 'px');
+      leaf.style.animationDuration = `${duration}s`;
+      leaf.style.animationDelay = `${Math.random() * -duration}s`;
+
+      // Gentle horizontal sway via slight left offset over time
+      leaf.style.animationTimingFunction = 'linear';
+
+      leafContainer.appendChild(leaf);
+
+      // Clean up after 2 full cycles
+      setTimeout(() => { leaf.remove(); spawnLeaf(); }, duration * 2 * 1000);
+    }
+
+    // Spawn initial batch
+    for (let i = 0; i < 15; i++) {
+      spawnLeaf();
     }
   </script>
 
